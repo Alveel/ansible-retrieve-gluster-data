@@ -1,6 +1,6 @@
 # Introduction
 
-This Ansible playbook is intended for use in OpenShift/OKD 3.x environments with Gluster. Its purpose is to ease gathering information that can be used to troubleshoot and or debug Gluster and/or Heketi issues.
+This Ansible playbook is intended for use in OpenShift/OKD 3.x environments with Gluster. Its purpose is to ease gathering information that can be used to troubleshoot and debug Gluster and Heketi issues.
 
 It:
 

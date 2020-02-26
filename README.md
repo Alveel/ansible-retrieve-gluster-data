@@ -1,3 +1,14 @@
+# Introduction
+
+This Ansible playbook is intended for use in OpenShift/OKD 3.x environments with Gluster. Its purpose is to ease gathering information that can be used to troubleshoot and or debug Gluster and/or Heketi issues.
+
+It:
+
+* exports the current Heketi database to JSON format
+* exports all persistent volumes in OpenShift to YAML format
+* saves the volume info of every gluster volume
+* exports logical volume (LV) and volume group (VG) information to JSON format
+
 # How to
 
 Before you begin, I assume you know how [ansible](https://docs.ansible.com/ansible/latest/) and python virtual environments work.

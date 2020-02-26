@@ -1,0 +1,47 @@
+---
+
+- name: create workdir
+  file:
+    path: /tmp/collect_info
+    state: directory
+    mode: '0700'
+
+- name: create heketi dir
+  file:
+    path: /tmp/collect_info/heketi
+    state: directory
+    mode: '0700'
+
+- name: mount heketi volume
+  mount:
+    path: /tmp/collect_info/heketi
+    src: localhost:heketidbstorage
+    fstype: glusterfs
+    state: mounted
+
+- set_fact:
+    time_now: "{{ansible_date_time.year}}{{ansible_date_time.month}}{{ansible_date_time.day}}{{ansible_date_time.hour}}{{ansible_date_time.minute}}"
+
+- name: export heketi db
+  command:
+    argv:
+      - /tmp/collect_info/heketi/heketi
+      - db
+      - export
+      - --dbfile
+      - /tmp/collect_info/heketi/heketi.db
+      - --jsonfile
+      - "/tmp/collect_info/{{ time_now }}.heketi.json"
+    creates: "/tmp/collect_info/{{ time_now }}.heketi.json"
+
+- name: unmount heketi volume
+  mount:
+    path: /tmp/collect_info/heketi
+    state: absent
+
+- name: retrieve heketi db export
+  fetch:
+    src: "/tmp/collect_info/{{time_now}}.heketi.json"
+    dest: retrieved-data/
+    flat: yes
+

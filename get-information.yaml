@@ -1,0 +1,42 @@
+---
+
+- hosts: heketi_volume
+  roles:
+    - os-get-heketi-info
+
+- hosts: localhost
+  roles:
+    - os-get-pv-info
+
+# Run gluster volume info in one gluster pod and save its output to a variable
+- hosts: localhost
+  vars:
+    ansible_connection: oc
+    ansible_oc_namespace: glusterfs
+    ansible_oc_pod: "{{ gluster_pods.resources[0].metadata.name }}"
+    ansible_python_interpreter: /usr/bin/python
+  tasks:
+    - set_fact:
+        time_now: "{{ansible_date_time.year}}{{ansible_date_time.month}}{{ansible_date_time.day}}{{ansible_date_time.hour}}{{ansible_date_time.minute}}"
+
+    - name: get gluster volume info
+      command: gluster volume info 
+      register: gluster_volume_info
+
+# Save gluster volume info output
+- hosts: localhost
+  tasks:
+    - name: save gluster volume info
+      copy:
+        content: "{{ gluster_volume_info.stdout }}"
+        dest: "retrieved-data/{{time_now}}.gluster-volume-info"
+
+# Get and save lvm (lvs/vgs) information on all gluster pods
+- hosts: label_glusterfs_storage-pod
+  vars:
+    ansible_connection: oc
+    ansible_oc_namespace: glusterfs
+    ansible_python_interpreter: /usr/bin/python
+  roles:
+    - os-get-lvm-info
+

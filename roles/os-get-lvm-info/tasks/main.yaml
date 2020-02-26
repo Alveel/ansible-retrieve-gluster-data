@@ -1,0 +1,24 @@
+---
+
+- name: set current time
+  set_fact:
+    time_now: "{{ansible_date_time.year}}{{ansible_date_time.month}}{{ansible_date_time.day}}{{ansible_date_time.hour}}{{ansible_date_time.minute}}"
+
+- name: get lvs info
+  shell: "lvs --all --units k --reportformat=json > /tmp/{{ time_now }}.lvs-{{ inventory_hostname }}.json"
+
+- name: save lvs info
+  fetch:
+    src: "/tmp/{{ time_now }}.lvs-{{ inventory_hostname }}.json"
+    dest: retrieved-data/
+    flat: yes
+
+- name: get vgs info
+  shell: "vgs --all --units k --reportformat=json > /tmp/{{ time_now }}.vgs-{{ inventory_hostname }}.json"
+
+- name: save vgs info
+  fetch:
+    src: "/tmp/{{ time_now }}.vgs-{{ inventory_hostname }}.json"
+    dest: retrieved-data/
+    flat: yes
+

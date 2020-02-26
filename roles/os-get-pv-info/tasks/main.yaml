@@ -1,0 +1,22 @@
+---
+
+- set_fact:
+    time_now: "{{ansible_date_time.year}}{{ansible_date_time.month}}{{ansible_date_time.day}}{{ansible_date_time.hour}}{{ansible_date_time.minute}}"
+
+- name: get and save all persistent volumes
+  block:
+    - command: oc get pv --all-namespaces -o yaml
+      register: oc_get_pv
+    - copy:
+        content: "{{ oc_get_pv.stdout }}"
+        dest: "{{ lookup('env', 'PWD') }}/retrieved-data/{{ time_now }}.oc-get-pv.yaml"
+
+- name: get data from gluster pod
+  k8s_info:
+    api_version: v1
+    kind: Pod
+    namespace: glusterfs
+    label_selectors:
+      - glusterfs=storage-pod
+  register: gluster_pods
+

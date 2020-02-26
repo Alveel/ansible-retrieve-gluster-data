@@ -1,0 +1,6 @@
+[gluster]
+my-gluster-nodes
+
+[heketi_volume]
+my-node-that-heketi-runs-on
+
